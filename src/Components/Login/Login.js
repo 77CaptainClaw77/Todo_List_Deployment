@@ -39,7 +39,9 @@ class Login extends Component {
 
                 const requestOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*',
+                    },
                     body: JSON.stringify(loginData)
                 };
 
