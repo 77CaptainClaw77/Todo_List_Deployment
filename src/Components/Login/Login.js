@@ -43,7 +43,7 @@ class Login extends Component {
                     body: JSON.stringify(loginData)
                 };
 
-                fetch('user/login', requestOptions)
+                fetch('user/login/', requestOptions)
                 .then(response => {
                     if(response.status === 200) {
                         console.log("Success");
