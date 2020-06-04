@@ -1,0 +1,144 @@
+BBimport React, { Component } from 'react';
+import Task from '../Task/Task';
+imBOBport AddTask from '../AddTask/AddTask';
+import NavbarAbove from '../Navbar/Navbar';
+import Image from 'react-bootstrap/Image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSort , faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Archive from '../Archive/Archive';
+import logo from './preview.png';
+import './Todo.css'
+
+class Todo extends Component {
+
+  state = { 
+    showAdd: false,
+    todoItems: [],
+    completedTodo: [],
+    originalData: [],
+    sortType: {
+      status: '',
+      label: '',
+      date: 'asc',
+      time: ''
+    },
+    currentSort: "date",
+    username: ""
+  };
+
+  UNSAFE_componentWillMount() {
+    console.log("In Component Will Mount");
+    this.updateData();
+  }
+
+  updateData = () => {
+    let todoData = [];
+    let completed = [];
+
+    let token = ("Token " + this.props.authToken).toString();
+        
+    const requestOptions = {
+        method: 'POST',
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": token,
+        }
+    };
+
+    fetch('http://127.0.0.1:8000/item/get_all', requestOptions)
+    .then(response => response.json())
+    .then(data => {
+
+        let OGdata = [];
+        let keyId = 1;
+
+        data.forEach(item => {
+          let newData = {
+            key: keyId, 
+            id: item["id"],
+            description: item["description"],
+            status: item["status"],
+            label: item["label"],
+            date: item["due_date_time"].slice(0,10),
+            time: item["due_date_time"].slice(11,19)
+          };
+          keyId++;
+          OGdata.push(newData);
+        })
+        
+        this.setState({
+          originalData: OGdata
+        }, () => {
+          this.state.originalData.forEach(item => {
+            let nowDate = Date.now();
+            let dueDate = new Date(item.date + " " + item.time);
+            let daysDiff = (dueDate.getTime() - nowDate) / (1000 * 3600 * 24);
+
+            if(item.status !== 'Completed') {
+              if(daysDiff < 0) {
+                item.status = "Overdue";
+              } else if(daysDiff <= 2) {
+                item.status = "Pending";
+              } else {
+                item.status = "Ongoing";
+              }
+              todoData.push(item);  
+            } else {
+              completed.push(item);
+            }
+          });
+      
+          this.setState({
+              todoItems: todoData,
+              completedTodo: completed
+          }, () => {
+            this.sortTasks(this.state.currentSort);
+            this.forceUpdate();
+          });
+        });
+    });
+  }
+
+  componentDidMount() {
+    this.fetchUsername();
+  }
+
+  fetchUsername = () => {
+    let token = ("Token " + this.props.authToken).toString();
+        
+    const requestOptions = {
+        method: 'POST',
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": token,
+        }
+    };
+
+    fetch('http://127.0.0.1:8000/user/getinfo/', requestOptions)
+    .then(response => response.json())
+    .then(data => {
+        this.setState({
+          username: data["first_name"]
+        });
+    });
+  }
+
+  toggleAddTask = () => {
+    this.setState({ 
+      showAdd: !this.state.showAdd
+    });
+  }
+
+  addNewTask = () => {
+    this.updateData();
+    this.forceUpdate();
+  }
+
+  getSortIcon = (val) => {
+    if (this.state.currentSort === val) {
+      if (this.state.sortType[val] === 'asc') {
+        return (<FontAwesomeIcon icon={faSortUp}></FontAwesomeIcon>);
+      } else if (this.state.sortType[val] === 'desc') {
+        return (<FontAwesomeIcon icon={faSortDown}></FontAwesomeIcon>);
+      } else {
