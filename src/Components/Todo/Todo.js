@@ -46,7 +46,7 @@ class Todo extends Component {
         }
     };
 
-    fetch('http://127.0.0.1:8000/item/get_all', requestOptions)
+    fetch('item/get_all/', requestOptions)
     .then(response => response.json())
     .then(data => {
 
