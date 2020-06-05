@@ -43,7 +43,7 @@ class Login extends Component {
                     body: JSON.stringify(loginData)
                 };
 
-                fetch('user/login/', requestOptions)
+                fetch('/user/login/', requestOptions)
                 .then(response => {
                     if(response.status === 200) {
                         console.log("Success");
@@ -133,6 +133,17 @@ class Login extends Component {
                     <Form.Group as={Col} md={12}>
                         <Button type="submit" variant="primary btn-block">Sign In</Button>
                     </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <div className="or mx-auto">
+                        <p><span>OR</span></p>
+                    </div>
+                </Form.Row>
+                <Form.Row>
+                    <p className="mx-auto">
+                        Not a member?
+                        <Button className="ml-3" variant="primary btn-sm" onClick={this.props.changeText}>Sign Up</Button>
+                    </p>
                 </Form.Row>
             </Form>
         )

@@ -91,7 +91,7 @@ class NavbarAbove extends React.Component {
             }
         };
 
-        fetch('user/logout/', requestOptions)
+        fetch('/user/logout/', requestOptions)
         .then(response => {
             if (response.status === 200) {
                 this.props.aFunctionCall(null);

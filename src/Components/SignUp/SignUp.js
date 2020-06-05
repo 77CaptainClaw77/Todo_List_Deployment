@@ -64,7 +64,7 @@ class SignUp extends Component {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(signUpData)
                 };
-                fetch('user/signup/', requestOptions)
+                fetch('/user/signup/', requestOptions)
                 .then(response => {
                     if (response.status === 200) {
                         alert("Registered Successfully, Login with your username and password.");
@@ -300,6 +300,17 @@ class SignUp extends Component {
                     <Form.Group as={Col} md={12}>
                         <Button type="submit" variant="primary btn-block">Sign Up</Button>
                     </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <div className="or mx-auto">
+                        <p><span>OR</span></p>
+                    </div>
+                </Form.Row>
+                <Form.Row>
+                    <p className="mx-auto">
+                        Already a member?
+                        <Button className="ml-3" variant="primary btn-sm" onClick={this.props.changeToLogin}>Sign In</Button>
+                    </p>
                 </Form.Row>
             </Form>
         )
